@@ -46,6 +46,17 @@ module Bundler
       Bundler.ui.error "Failed to install plugin #{name}: #{e.message}\n  #{e.backtrace.join("\n ")}"
     end
 
+    def update
+      installed_plugins = index.installed_plugins
+      installed_plugins.each do |plugin|
+        path = plugin_path(plugin.name)
+        # look at path to see the version of a plugin
+        if new_version_available?(plugin)
+          install(latest)
+        end
+      end
+    end
+
     # Evaluates the Gemfile with a limited DSL and installs the plugins
     # specified by plugin method
     #
@@ -277,9 +288,15 @@ module Bundler
       end
     end
 
+    def new_version_available?(plugin)
+      # go to installl location and check available version
+      specs = Installer.new.install(names, options)
+      # something like: specs.version > self.version
+    end
+
     class << self
       private :load_plugin, :register_plugin, :save_plugins, :validate_plugin!,
-        :add_to_load_path
+        :add_to_load_path, :new_version_available?
     end
   end
 end

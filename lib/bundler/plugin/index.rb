@@ -95,6 +95,10 @@ module Bundler
         @plugin_paths[name]
       end
 
+      def installed_plugins
+        @plugin_paths.keys
+      end
+
       def source?(source)
         @sources.key? source
       end

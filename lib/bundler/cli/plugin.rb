@@ -20,5 +20,10 @@ module Bundler
     def install(*plugins)
       Bundler::Plugin.install(plugins, options)
     end
+
+   desc "update", "Update the installed plugins and available commands"
+     def update
+       Bundler::Plugin.update
+     end
   end
 end
