@@ -190,10 +190,48 @@ that would suck --ehhh=oh geez it looks like i might have broken bundler somehow
       end
     end
 
-    context "with a configured mirror" do
+    context "with a configured https mirror" do
       let(:mirror_uri) { URI("https://rubygems-mirror.org/") }
 
       before { settings.set_local "mirror.https://rubygems.org/", mirror_uri.to_s }
+
+      it "returns the mirror URI" do
+        expect(settings.mirror_for(uri)).to eq(mirror_uri)
+      end
+
+      it "converts a string parameter to a URI" do
+        expect(settings.mirror_for("https://rubygems.org/")).to eq(mirror_uri)
+      end
+
+      it "normalizes the URI" do
+        expect(settings.mirror_for("https://rubygems.org")).to eq(mirror_uri)
+      end
+
+      it "is case insensitive" do
+        expect(settings.mirror_for("HTTPS://RUBYGEMS.ORG/")).to eq(mirror_uri)
+      end
+
+      context "with a file URI" do
+        let(:mirror_uri) { URI("file:/foo/BAR/baz/qUx/") }
+
+        it "returns the mirror URI" do
+          expect(settings.mirror_for(uri)).to eq(mirror_uri)
+        end
+
+        it "converts a string parameter to a URI" do
+          expect(settings.mirror_for("file:/foo/BAR/baz/qUx/")).to eq(mirror_uri)
+        end
+
+        it "normalizes the URI" do
+          expect(settings.mirror_for("file:/foo/BAR/baz/qUx")).to eq(mirror_uri)
+        end
+      end
+    end
+
+    context "with a configured git mirror" do
+      let(:mirror_uri) { URI("ssh://git@github.com:bundler-alt/bundler-alt.git/") }
+
+      before { settings.set_local "ssh://git@github.com:bundler/bundler.git/", mirror_uri.to_s }
 
       it "returns the mirror URI" do
         expect(settings.mirror_for(uri)).to eq(mirror_uri)

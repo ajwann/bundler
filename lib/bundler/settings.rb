@@ -168,7 +168,13 @@ module Bundler
     end
 
     def mirror_for(uri)
+      puts "$" * 100
+      puts "########################## mirror for" + uri.to_s
+      if /git@/ ~= uri
+        uri.split(':', 2)
+      else
       uri = URI(uri.to_s) unless uri.is_a?(URI)
+      end
       gem_mirrors.for(uri.to_s).uri
     end
 
